@@ -6,6 +6,8 @@ import com.github.ep2p.kademlia.connection.NodeConnectionApi;
 import com.github.ep2p.kademlia.model.FindNodeAnswer;
 import com.github.ep2p.kademlia.model.PingAnswer;
 import com.github.ep2p.kademlia.node.Node;
+import io.ep2p.somnia.model.SomniaKey;
+import io.ep2p.somnia.model.SomniaValue;
 import io.ep2p.somnia.sample.configuration.Address;
 import io.ep2p.somnia.sample.domain.KeyValueDto;
 import io.ep2p.somnia.sample.domain.SampleConnectionInfo;
@@ -47,21 +49,21 @@ public class SampleConnectionApi implements NodeConnectionApi<BigInteger, Connec
 
     @Override
     public <K, V> void storeAsync(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, Node<BigInteger, ConnectionInfo> contactingNode, K key, V value) {
-        this.sendRequest(contactingNode.getConnectionInfo(), Address.STORE, caller, KeyValueDto.<K, V>builder().value(value).key(key).build(), String.class);
+        this.sendRequest(contactingNode.getConnectionInfo(), Address.STORE, caller, KeyValueDto.<K, V>builder().value((SomniaValue) value).key((SomniaKey) key).build(), String.class);
     }
 
     @Override
     public <K> void getRequest(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, Node<BigInteger, ConnectionInfo> contactingNode, K key) {
-        this.sendRequest(contactingNode.getConnectionInfo(), Address.GET, caller, KeyValueDto.<K, Void>builder().key(key).build(), String.class);
+        this.sendRequest(contactingNode.getConnectionInfo(), Address.GET, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).build(), String.class);
     }
 
     @Override
     public <K, V> void sendGetResults(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, K key, V value) {
-        this.sendRequest(requester.getConnectionInfo(), Address.GET_RESULT, caller, KeyValueDto.<K, V>builder().key(key).value(value).build(), String.class);
+        this.sendRequest(requester.getConnectionInfo(), Address.GET_RESULT, caller, KeyValueDto.<K, V>builder().key((SomniaKey) key).value((SomniaValue) value).build(), String.class);
     }
 
     @Override
     public <K> void sendStoreResults(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, K key, boolean success) {
-        this.sendRequest(requester.getConnectionInfo(), Address.STORE_RESULT, caller, KeyValueDto.<K, Void>builder().key(key).success(success).build(), String.class);
+        this.sendRequest(requester.getConnectionInfo(), Address.STORE_RESULT, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).success(success).build(), String.class);
     }
 }
