@@ -1,69 +1,76 @@
 package io.ep2p.somnia.sample.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ep2p.kademlia.connection.ConnectionInfo;
 import com.github.ep2p.kademlia.connection.NodeConnectionApi;
 import com.github.ep2p.kademlia.model.FindNodeAnswer;
 import com.github.ep2p.kademlia.model.PingAnswer;
 import com.github.ep2p.kademlia.node.Node;
+import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.model.SomniaKey;
 import io.ep2p.somnia.model.SomniaValue;
 import io.ep2p.somnia.sample.configuration.Address;
+import io.ep2p.somnia.sample.domain.FindNodeRequest;
 import io.ep2p.somnia.sample.domain.KeyValueDto;
-import io.ep2p.somnia.sample.domain.SampleConnectionInfo;
 import io.ep2p.somnia.sample.domain.SomniaDTO;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
 
-public class SampleConnectionApi implements NodeConnectionApi<BigInteger, ConnectionInfo> {
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+public class SampleConnectionApi implements NodeConnectionApi<BigInteger, SomniaConnectionInfo> {
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+
+    public SampleConnectionApi(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
 
 
-    private <E, O> O sendRequest(ConnectionInfo sampleConnectionInfo, String address, Node<BigInteger, ConnectionInfo> node, E input, Class<O> outputClass){
-        SampleConnectionInfo sampleConnectionInfo1 = (SampleConnectionInfo) sampleConnectionInfo;
+    private <E, O> O sendRequest(SomniaConnectionInfo somniaConnectionInfo, String address, Node<BigInteger, SomniaConnectionInfo> node, E input, Class<O> outputClass){
+        JsonNode jsonNode = input != null ? this.objectMapper.valueToTree(input) : null;
+
         return restTemplate.postForEntity(
-                sampleConnectionInfo1.getAddress() + address,
+                somniaConnectionInfo.getAddress() + address,
                 SomniaDTO.builder()
                     .node( node)
-                    .object(input != null ? this.objectMapper.valueToTree(input) : null)
+                    .object(jsonNode)
                     .build(),
                 outputClass).getBody();
     }
 
     @Override
-    public PingAnswer<BigInteger> ping(Node<BigInteger, ConnectionInfo> node, Node<BigInteger, ConnectionInfo> contactingNode) {
+    public PingAnswer<BigInteger> ping(Node<BigInteger, SomniaConnectionInfo> node, Node<BigInteger, SomniaConnectionInfo> contactingNode) {
         return this.sendRequest(contactingNode.getConnectionInfo(), Address.PING, node, null, PingAnswer.class);
     }
 
     @Override
-    public void shutdownSignal(Node<BigInteger, ConnectionInfo> node, Node<BigInteger, ConnectionInfo> contactingNode) {
+    public void shutdownSignal(Node<BigInteger, SomniaConnectionInfo> node, Node<BigInteger, SomniaConnectionInfo> contactingNode) {
         this.sendRequest(contactingNode.getConnectionInfo(), Address.SHUTDOWN, node, null, String.class);
     }
 
     @Override
-    public FindNodeAnswer<BigInteger, ConnectionInfo> findNode(Node<BigInteger, ConnectionInfo> node, Node<BigInteger, ConnectionInfo> contactingNode, BigInteger bigInteger) {
-        return this.sendRequest(contactingNode.getConnectionInfo(), Address.FIND, node, bigInteger, FindNodeAnswer.class);
+    public FindNodeAnswer<BigInteger, SomniaConnectionInfo> findNode(Node<BigInteger, SomniaConnectionInfo> node, Node<BigInteger, SomniaConnectionInfo> contactingNode, BigInteger bigInteger) {
+        return this.sendRequest(contactingNode.getConnectionInfo(), Address.FIND, node, new FindNodeRequest(bigInteger), FindNodeAnswer.class);
     }
 
     @Override
-    public <K, V> void storeAsync(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, Node<BigInteger, ConnectionInfo> contactingNode, K key, V value) {
+    public <K, V> void storeAsync(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, Node<BigInteger, SomniaConnectionInfo> contactingNode, K key, V value) {
         this.sendRequest(contactingNode.getConnectionInfo(), Address.STORE, caller, KeyValueDto.<K, V>builder().value((SomniaValue) value).key((SomniaKey) key).build(), String.class);
     }
 
     @Override
-    public <K> void getRequest(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, Node<BigInteger, ConnectionInfo> contactingNode, K key) {
+    public <K> void getRequest(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, Node<BigInteger, SomniaConnectionInfo> contactingNode, K key) {
         this.sendRequest(contactingNode.getConnectionInfo(), Address.GET, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).build(), String.class);
     }
 
     @Override
-    public <K, V> void sendGetResults(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, K key, V value) {
+    public <K, V> void sendGetResults(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, K key, V value) {
         this.sendRequest(requester.getConnectionInfo(), Address.GET_RESULT, caller, KeyValueDto.<K, V>builder().key((SomniaKey) key).value((SomniaValue) value).build(), String.class);
     }
 
     @Override
-    public <K> void sendStoreResults(Node<BigInteger, ConnectionInfo> caller, Node<BigInteger, ConnectionInfo> requester, K key, boolean success) {
+    public <K> void sendStoreResults(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, K key, boolean success) {
         this.sendRequest(requester.getConnectionInfo(), Address.STORE_RESULT, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).success(success).build(), String.class);
     }
 }

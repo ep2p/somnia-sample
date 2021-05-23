@@ -8,4 +8,5 @@ public interface Address {
      String GET = "/api/get";
      String GET_RESULT = "/api/get/result";
      String STORE_RESULT = "/api/store/result";
+     String BOOTSTRAP = "/api/bootstrap/{id}";
 }

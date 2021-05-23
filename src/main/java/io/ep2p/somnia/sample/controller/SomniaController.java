@@ -1,14 +1,18 @@
 package io.ep2p.somnia.sample.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ep2p.kademlia.connection.ConnectionInfo;
+import com.github.ep2p.kademlia.exception.BootstrapException;
 import com.github.ep2p.kademlia.model.FindNodeAnswer;
 import com.github.ep2p.kademlia.model.PingAnswer;
+import com.github.ep2p.kademlia.node.external.BigIntegerExternalNode;
+import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.decentralized.SomniaKademliaSyncRepositoryNode;
 import io.ep2p.somnia.sample.configuration.Address;
+import io.ep2p.somnia.sample.domain.FindNodeRequest;
 import io.ep2p.somnia.sample.domain.KeyValueDto;
 import io.ep2p.somnia.sample.domain.SomniaDTO;
 import lombok.SneakyThrows;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +43,8 @@ public class SomniaController {
 
     @SneakyThrows
     @PostMapping(Address.FIND)
-    public FindNodeAnswer<BigInteger, ConnectionInfo> onFind(@RequestBody SomniaDTO somniaDTO){
-        return somniaKademliaSyncRepositoryNode.onFindNode(somniaDTO.getNode(), objectMapper.readValue(somniaDTO.getObject().toString(), BigInteger.class));
+    public FindNodeAnswer<BigInteger, SomniaConnectionInfo> onFind(@RequestBody SomniaDTO somniaDTO){
+        return somniaKademliaSyncRepositoryNode.onFindNode(somniaDTO.getNode(), objectMapper.readValue(somniaDTO.getObject().toString(), FindNodeRequest.class).getId());
     }
 
     @SneakyThrows
@@ -64,6 +68,15 @@ public class SomniaController {
     public String onStoreResult(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onStoreResult(somniaDTO.getNode(), keyValueDto.getKey(), keyValueDto.isSuccess());
+        return "OK";
+    }
+
+    @PostMapping(Address.BOOTSTRAP)
+    public String bootstrap(@RequestBody SomniaConnectionInfo connectionInfo, @PathVariable("id") long id) throws BootstrapException {
+        BigIntegerExternalNode<SomniaConnectionInfo> externalNode = new BigIntegerExternalNode<>();
+        externalNode.setConnectionInfo(connectionInfo);
+        externalNode.setId(BigInteger.valueOf(id));
+        somniaKademliaSyncRepositoryNode.bootstrap(externalNode);
         return "OK";
     }
 
