@@ -10,6 +10,7 @@ import io.ep2p.somnia.sample.domain.KeyValueDto;
 import io.ep2p.somnia.sample.domain.SomniaDTO;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigInteger;
@@ -25,26 +26,26 @@ public class SomniaController {
     }
 
     @SneakyThrows
-    @PostMapping(Address.FIND)
-    public PingAnswer<BigInteger> onPing(SomniaDTO somniaDTO){
+    @PostMapping(Address.PING)
+    public PingAnswer<BigInteger> onPing(@RequestBody SomniaDTO somniaDTO){
         return somniaKademliaSyncRepositoryNode.onPing(somniaDTO.getNode());
     }
 
     @PostMapping(Address.SHUTDOWN)
-    public String onShutdown(SomniaDTO somniaDTO){
+    public String onShutdown(@RequestBody SomniaDTO somniaDTO){
         somniaKademliaSyncRepositoryNode.onShutdownSignal(somniaDTO.getNode());
         return "OK";
     }
 
     @SneakyThrows
     @PostMapping(Address.FIND)
-    public FindNodeAnswer<BigInteger, ConnectionInfo> onFind(SomniaDTO somniaDTO){
+    public FindNodeAnswer<BigInteger, ConnectionInfo> onFind(@RequestBody SomniaDTO somniaDTO){
         return somniaKademliaSyncRepositoryNode.onFindNode(somniaDTO.getNode(), objectMapper.readValue(somniaDTO.getObject().toString(), BigInteger.class));
     }
 
     @SneakyThrows
     @PostMapping(Address.STORE)
-    public String onStore(SomniaDTO somniaDTO){
+    public String onStore(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onStoreRequest(somniaDTO.getNode(), somniaDTO.getRequester(), keyValueDto.getKey(), keyValueDto.getValue());
         return "OK";
@@ -52,7 +53,7 @@ public class SomniaController {
 
     @PostMapping(Address.GET_RESULT)
     @SneakyThrows
-    public String onGetResult(SomniaDTO somniaDTO){
+    public String onGetResult(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onGetResult(somniaDTO.getNode(), keyValueDto.getKey(), keyValueDto.getValue());
         return "OK";
@@ -60,7 +61,7 @@ public class SomniaController {
 
     @PostMapping(Address.STORE_RESULT)
     @SneakyThrows
-    public String onStoreResult(SomniaDTO somniaDTO){
+    public String onStoreResult(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onStoreResult(somniaDTO.getNode(), keyValueDto.getKey(), keyValueDto.isSuccess());
         return "OK";

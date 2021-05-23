@@ -10,4 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class DataModel implements Serializable {
     private String name;
+    private String lastname;
+    private String nickname;
 }

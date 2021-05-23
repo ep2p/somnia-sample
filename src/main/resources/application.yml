@@ -4,3 +4,10 @@ somnia:
     mongo-key-index-name: sample-index
     decentralized:
       minimum-distribution: 10
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: somnia-sample-1
