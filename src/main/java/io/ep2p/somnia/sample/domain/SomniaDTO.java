@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.ep2p.kademlia.connection.ConnectionInfo;
 import com.github.ep2p.kademlia.node.Node;
 import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigInteger;
 
@@ -17,6 +14,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 public class SomniaDTO {
     private Node<BigInteger, SomniaConnectionInfo> node;
     private Node<BigInteger, SomniaConnectionInfo> requester;

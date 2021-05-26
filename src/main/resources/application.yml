@@ -1,6 +1,6 @@
 somnia:
   config:
-    base-package: com.ep2p.somnia.sample
+#    base-package: io.ep2p.somnia.sample
     mongo-key-index-name: sample-index
     decentralized:
       minimum-distribution: 10

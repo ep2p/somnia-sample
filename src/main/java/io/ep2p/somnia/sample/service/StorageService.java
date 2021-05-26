@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.ep2p.kademlia.exception.StoreException;
 import com.github.ep2p.kademlia.model.GetAnswer;
 import com.github.ep2p.kademlia.model.StoreAnswer;
+import io.ep2p.somnia.decentralized.SomniaEntityManager;
 import io.ep2p.somnia.decentralized.SomniaKademliaSyncRepositoryNode;
 import io.ep2p.somnia.model.SomniaKey;
 import io.ep2p.somnia.model.SomniaValue;
@@ -24,18 +25,23 @@ import static com.github.ep2p.kademlia.model.GetAnswer.Result.FOUND;
 public class StorageService {
     private final SomniaKademliaSyncRepositoryNode somniaKademliaSyncRepositoryNode;
     private final ObjectMapper objectMapper;
+    private final SomniaEntityManager somniaEntityManager;
 
-    public StorageService(SomniaKademliaSyncRepositoryNode somniaKademliaSyncRepositoryNode, ObjectMapper objectMapper) {
+
+    public StorageService(SomniaKademliaSyncRepositoryNode somniaKademliaSyncRepositoryNode, ObjectMapper objectMapper, SomniaEntityManager somniaEntityManager) {
         this.somniaKademliaSyncRepositoryNode = somniaKademliaSyncRepositoryNode;
         this.objectMapper = objectMapper;
+        this.somniaEntityManager = somniaEntityManager;
     }
 
 
     @SneakyThrows
     public String store(long id, DataModel dataModel) throws StoreException {
+        somniaEntityManager.getClassOfName(SampleSomniaEntity.class.getName());
         SomniaKey somniaKey = SomniaKey.builder()
                 .key(BigInteger.valueOf(id))
                 .name(SampleSomniaEntity.class.getName())
+                .hash(BigInteger.valueOf(id))
                 .build();
         StoreAnswer<BigInteger, SomniaKey> storeAnswer = somniaKademliaSyncRepositoryNode.store(somniaKey, SomniaValue.builder()
                 .data(objectMapper.valueToTree(dataModel))

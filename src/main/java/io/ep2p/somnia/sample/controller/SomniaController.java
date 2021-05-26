@@ -8,6 +8,7 @@ import com.github.ep2p.kademlia.node.external.BigIntegerExternalNode;
 import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.decentralized.SomniaKademliaSyncRepositoryNode;
 import io.ep2p.somnia.sample.configuration.Address;
+import io.ep2p.somnia.sample.domain.BasicResultDto;
 import io.ep2p.somnia.sample.domain.FindNodeRequest;
 import io.ep2p.somnia.sample.domain.KeyValueDto;
 import io.ep2p.somnia.sample.domain.SomniaDTO;
@@ -36,9 +37,9 @@ public class SomniaController {
     }
 
     @PostMapping(Address.SHUTDOWN)
-    public String onShutdown(@RequestBody SomniaDTO somniaDTO){
+    public BasicResultDto onShutdown(@RequestBody SomniaDTO somniaDTO){
         somniaKademliaSyncRepositoryNode.onShutdownSignal(somniaDTO.getNode());
-        return "OK";
+        return new BasicResultDto();
     }
 
     @SneakyThrows
@@ -49,35 +50,35 @@ public class SomniaController {
 
     @SneakyThrows
     @PostMapping(Address.STORE)
-    public String onStore(@RequestBody SomniaDTO somniaDTO){
+    public BasicResultDto onStore(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onStoreRequest(somniaDTO.getNode(), somniaDTO.getRequester(), keyValueDto.getKey(), keyValueDto.getValue());
-        return "OK";
+        return new BasicResultDto();
     }
 
     @PostMapping(Address.GET_RESULT)
     @SneakyThrows
-    public String onGetResult(@RequestBody SomniaDTO somniaDTO){
+    public BasicResultDto onGetResult(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onGetResult(somniaDTO.getNode(), keyValueDto.getKey(), keyValueDto.getValue());
-        return "OK";
+        return new BasicResultDto();
     }
 
     @PostMapping(Address.STORE_RESULT)
     @SneakyThrows
-    public String onStoreResult(@RequestBody SomniaDTO somniaDTO){
+    public BasicResultDto onStoreResult(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
         somniaKademliaSyncRepositoryNode.onStoreResult(somniaDTO.getNode(), keyValueDto.getKey(), keyValueDto.isSuccess());
-        return "OK";
+        return new BasicResultDto();
     }
 
     @PostMapping(Address.BOOTSTRAP)
-    public String bootstrap(@RequestBody SomniaConnectionInfo connectionInfo, @PathVariable("id") long id) throws BootstrapException {
+    public BasicResultDto bootstrap(@RequestBody SomniaConnectionInfo connectionInfo, @PathVariable("id") long id) throws BootstrapException {
         BigIntegerExternalNode<SomniaConnectionInfo> externalNode = new BigIntegerExternalNode<>();
         externalNode.setConnectionInfo(connectionInfo);
         externalNode.setId(BigInteger.valueOf(id));
         somniaKademliaSyncRepositoryNode.bootstrap(externalNode);
-        return "OK";
+        return new BasicResultDto();
     }
 
 }

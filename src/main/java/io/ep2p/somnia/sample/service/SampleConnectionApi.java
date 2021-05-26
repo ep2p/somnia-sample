@@ -10,6 +10,7 @@ import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.model.SomniaKey;
 import io.ep2p.somnia.model.SomniaValue;
 import io.ep2p.somnia.sample.configuration.Address;
+import io.ep2p.somnia.sample.domain.BasicResultDto;
 import io.ep2p.somnia.sample.domain.FindNodeRequest;
 import io.ep2p.somnia.sample.domain.KeyValueDto;
 import io.ep2p.somnia.sample.domain.SomniaDTO;
@@ -30,12 +31,16 @@ public class SampleConnectionApi implements NodeConnectionApi<BigInteger, Somnia
     private <E, O> O sendRequest(SomniaConnectionInfo somniaConnectionInfo, String address, Node<BigInteger, SomniaConnectionInfo> node, E input, Class<O> outputClass){
         JsonNode jsonNode = input != null ? this.objectMapper.valueToTree(input) : null;
 
+        SomniaDTO somniaDTO = SomniaDTO.builder()
+                .node(node)
+                .object(jsonNode)
+                .build();
+
+        System.out.println(somniaDTO);
+
         return restTemplate.postForEntity(
                 somniaConnectionInfo.getAddress() + address,
-                SomniaDTO.builder()
-                    .node( node)
-                    .object(jsonNode)
-                    .build(),
+                somniaDTO,
                 outputClass).getBody();
     }
 
@@ -46,7 +51,7 @@ public class SampleConnectionApi implements NodeConnectionApi<BigInteger, Somnia
 
     @Override
     public void shutdownSignal(Node<BigInteger, SomniaConnectionInfo> node, Node<BigInteger, SomniaConnectionInfo> contactingNode) {
-        this.sendRequest(contactingNode.getConnectionInfo(), Address.SHUTDOWN, node, null, String.class);
+        this.sendRequest(contactingNode.getConnectionInfo(), Address.SHUTDOWN, node, null, BasicResultDto.class);
     }
 
     @Override
@@ -56,21 +61,25 @@ public class SampleConnectionApi implements NodeConnectionApi<BigInteger, Somnia
 
     @Override
     public <K, V> void storeAsync(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, Node<BigInteger, SomniaConnectionInfo> contactingNode, K key, V value) {
-        this.sendRequest(contactingNode.getConnectionInfo(), Address.STORE, caller, KeyValueDto.<K, V>builder().value((SomniaValue) value).key((SomniaKey) key).build(), String.class);
+        this.sendRequest(contactingNode.getConnectionInfo(), Address.STORE, caller, KeyValueDto.<K, V>builder().value((SomniaValue) value).key((SomniaKey) key).build(), BasicResultDto.class);
     }
 
     @Override
     public <K> void getRequest(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, Node<BigInteger, SomniaConnectionInfo> contactingNode, K key) {
-        this.sendRequest(contactingNode.getConnectionInfo(), Address.GET, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).build(), String.class);
+        this.sendRequest(contactingNode.getConnectionInfo(), Address.GET, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).build(), BasicResultDto.class);
     }
 
     @Override
     public <K, V> void sendGetResults(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, K key, V value) {
-        this.sendRequest(requester.getConnectionInfo(), Address.GET_RESULT, caller, KeyValueDto.<K, V>builder().key((SomniaKey) key).value((SomniaValue) value).build(), String.class);
+        this.sendRequest(requester.getConnectionInfo(), Address.GET_RESULT, caller, KeyValueDto.<K, V>builder().key((SomniaKey) key).value((SomniaValue) value).build(), BasicResultDto.class);
     }
 
     @Override
     public <K> void sendStoreResults(Node<BigInteger, SomniaConnectionInfo> caller, Node<BigInteger, SomniaConnectionInfo> requester, K key, boolean success) {
-        this.sendRequest(requester.getConnectionInfo(), Address.STORE_RESULT, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).success(success).build(), String.class);
+        System.out.println("------------");
+        System.out.println(key);
+        System.out.println(requester);
+        System.out.println(caller);
+        this.sendRequest(requester.getConnectionInfo(), Address.STORE_RESULT, caller, KeyValueDto.<K, Void>builder().key((SomniaKey) key).success(success).build(), BasicResultDto.class);
     }
 }
