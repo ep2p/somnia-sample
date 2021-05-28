@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigInteger;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @RestController
 public class SomniaController {
     private final SomniaKademliaSyncRepositoryNode somniaKademliaSyncRepositoryNode;
     private final ObjectMapper objectMapper;
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     public SomniaController(SomniaKademliaSyncRepositoryNode somniaKademliaSyncRepositoryNode, ObjectMapper objectMapper) {
         this.somniaKademliaSyncRepositoryNode = somniaKademliaSyncRepositoryNode;
@@ -52,7 +55,12 @@ public class SomniaController {
     @PostMapping(Address.STORE)
     public BasicResultDto onStore(@RequestBody SomniaDTO somniaDTO){
         KeyValueDto keyValueDto = objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class);
-        somniaKademliaSyncRepositoryNode.onStoreRequest(somniaDTO.getNode(), somniaDTO.getRequester(), keyValueDto.getKey(), keyValueDto.getValue());
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                somniaKademliaSyncRepositoryNode.onStoreRequest(somniaDTO.getNode(), somniaDTO.getRequester(), keyValueDto.getKey(), keyValueDto.getValue());
+            }
+        });
         return new BasicResultDto();
     }
 
