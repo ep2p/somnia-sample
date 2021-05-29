@@ -53,6 +53,7 @@ public class StorageService {
     public DataModel get(long id){
         SomniaKey somniaKey = SomniaKey.builder()
                 .key(BigInteger.valueOf(id))
+                .hash(BigInteger.valueOf(id))
                 .name(SampleSomniaEntity.class.getName())
                 .build();
         GetAnswer<BigInteger, SomniaKey, SomniaValue> getAnswer = somniaKademliaSyncRepositoryNode.get(somniaKey, 5, TimeUnit.SECONDS);

@@ -46,6 +46,19 @@ public class SomniaController {
     }
 
     @SneakyThrows
+    @PostMapping(Address.GET)
+    public BasicResultDto onGet(@RequestBody SomniaDTO somniaDTO){
+        executor.execute(new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                somniaKademliaSyncRepositoryNode.onGetRequest(somniaDTO.getNode(), somniaDTO.getRequester(), objectMapper.readValue(somniaDTO.getObject().toString(), KeyValueDto.class).getKey());
+            }
+        });
+        return new BasicResultDto();
+    }
+
+    @SneakyThrows
     @PostMapping(Address.FIND)
     public FindNodeAnswer<BigInteger, SomniaConnectionInfo> onFind(@RequestBody SomniaDTO somniaDTO){
         return somniaKademliaSyncRepositoryNode.onFindNode(somniaDTO.getNode(), objectMapper.readValue(somniaDTO.getObject().toString(), FindNodeRequest.class).getId());
