@@ -6,6 +6,7 @@ import io.ep2p.kademlia.connection.NodeConnectionApi;
 import io.ep2p.kademlia.table.BigIntegerRoutingTable;
 import io.ep2p.kademlia.table.Bucket;
 import io.ep2p.kademlia.table.RoutingTable;
+import io.ep2p.somnia.config.dynamic.EnableSomniaRepository;
 import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.sample.service.SampleConnectionApi;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,12 +21,13 @@ import java.math.BigInteger;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "io.ep2p.somnia.sample.domain")
+@EnableSomniaRepository(basePackages = "io.ep2p.somnia.sample.domain.repository")
 public class ApplicationConfiguration {
     private final int nodeId;
     private final int port;
     private final String host;
 
-    public ApplicationConfiguration(@Value("${nodeId}") int nodeId, @Value("${server.port}") int port, @Value("${server.host}") String host) {
+    public ApplicationConfiguration(@Value("${nodeId:2}") int nodeId, @Value("${server.port:8002}") int port, @Value("${server.host:127.0.0.1}") String host) {
         this.nodeId = nodeId;
         this.port = port;
         this.host = host;

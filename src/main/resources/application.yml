@@ -1,3 +1,6 @@
+server:
+  port: 8002
+
 somnia:
   config:
 #    base-package: io.ep2p.somnia.sample

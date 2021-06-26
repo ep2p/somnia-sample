@@ -16,14 +16,13 @@ public class StorageController {
         this.storageService = storageService;
     }
 
-    @SneakyThrows
+
     @PostMapping("/storage/store/{id}")
     public @ResponseBody
     String storeData(@RequestBody DataModel dataModel, @PathVariable("id") long id){
         return storageService.store(id, dataModel);
     }
 
-    @SneakyThrows
     @GetMapping("/storage/get/{id}")
     public @ResponseBody
     DataModel getData(@PathVariable("id") long id){
