@@ -1,10 +1,10 @@
 package io.ep2p.somnia.sample.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ep2p.kademlia.exception.BootstrapException;
-import com.github.ep2p.kademlia.model.FindNodeAnswer;
-import com.github.ep2p.kademlia.model.PingAnswer;
-import com.github.ep2p.kademlia.node.external.BigIntegerExternalNode;
+import io.ep2p.kademlia.exception.BootstrapException;
+import io.ep2p.kademlia.model.FindNodeAnswer;
+import io.ep2p.kademlia.model.PingAnswer;
+import io.ep2p.kademlia.node.external.BigIntegerExternalNode;
 import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.decentralized.SomniaKademliaSyncRepositoryNode;
 import io.ep2p.somnia.sample.configuration.Address;

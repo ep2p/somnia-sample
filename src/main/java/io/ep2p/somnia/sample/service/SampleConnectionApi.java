@@ -2,10 +2,10 @@ package io.ep2p.somnia.sample.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ep2p.kademlia.connection.NodeConnectionApi;
-import com.github.ep2p.kademlia.model.FindNodeAnswer;
-import com.github.ep2p.kademlia.model.PingAnswer;
-import com.github.ep2p.kademlia.node.Node;
+import io.ep2p.kademlia.connection.NodeConnectionApi;
+import io.ep2p.kademlia.model.FindNodeAnswer;
+import io.ep2p.kademlia.model.PingAnswer;
+import io.ep2p.kademlia.node.Node;
 import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.model.SomniaKey;
 import io.ep2p.somnia.model.SomniaValue;

@@ -3,9 +3,9 @@ package io.ep2p.somnia.sample.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ep2p.kademlia.exception.StoreException;
-import com.github.ep2p.kademlia.model.GetAnswer;
-import com.github.ep2p.kademlia.model.StoreAnswer;
+import io.ep2p.kademlia.exception.StoreException;
+import io.ep2p.kademlia.model.GetAnswer;
+import io.ep2p.kademlia.model.StoreAnswer;
 import io.ep2p.somnia.decentralized.SomniaEntityManager;
 import io.ep2p.somnia.decentralized.SomniaKademliaSyncRepositoryNode;
 import io.ep2p.somnia.model.SomniaKey;
@@ -19,7 +19,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.github.ep2p.kademlia.model.GetAnswer.Result.FOUND;
+import static io.ep2p.kademlia.model.GetAnswer.Result.FOUND;
 
 @Service
 public class StorageService {

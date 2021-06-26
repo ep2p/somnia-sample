@@ -1,11 +1,11 @@
 package io.ep2p.somnia.sample.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ep2p.kademlia.connection.ConnectionInfo;
-import com.github.ep2p.kademlia.connection.NodeConnectionApi;
-import com.github.ep2p.kademlia.table.BigIntegerRoutingTable;
-import com.github.ep2p.kademlia.table.Bucket;
-import com.github.ep2p.kademlia.table.RoutingTable;
+import io.ep2p.kademlia.connection.ConnectionInfo;
+import io.ep2p.kademlia.connection.NodeConnectionApi;
+import io.ep2p.kademlia.table.BigIntegerRoutingTable;
+import io.ep2p.kademlia.table.Bucket;
+import io.ep2p.kademlia.table.RoutingTable;
 import io.ep2p.somnia.decentralized.SomniaConnectionInfo;
 import io.ep2p.somnia.sample.service.SampleConnectionApi;
 import org.springframework.beans.factory.annotation.Value;
